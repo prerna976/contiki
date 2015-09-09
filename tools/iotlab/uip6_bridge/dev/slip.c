@@ -46,7 +46,6 @@
 
 #include "../sicslow_ethernet.h"
 #include <stdlib.h>
-#include "dev/stm32w-radio.h"
 
 #define SLIP_END     0300
 #define SLIP_ESC     0333
@@ -298,13 +297,15 @@ slip_poll_handler(uint8_t *outbuf, uint16_t blen)
 
         return 0;
       } else if(memcmp(&tmpbuf[1], "OC", 2) == 0) {
-
+#if 0
         short ch_num;
 
         tmpbuf[5] = '\0';
         if(ch_num = atoi((char *)tmpbuf + 3)) {
           ST_RadioSetChannel(ch_num);
         }
+#endif
+        printf("Channel selection not handled\n");
         return 0;
       }
     }
