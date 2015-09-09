@@ -145,6 +145,7 @@
 /*
  * For STM32W.
  * Modified! 0xff and 0xfe are sobstituted by 0x02 and 0x00.
+ * TODO IoT-LAB
  */
 
 #include "net/uip.h"
@@ -152,10 +153,12 @@
 #include "net/rime.h"
 #include "net/sicslowpan.h"
 #include "sicslow_ethernet.h"
-#include "dev/stm32w-radio.h"
 #include "net/mac/frame802154.h"
 #include "dev/slip.h"
 #include "dev/leds.h"
+
+#include "radio-rf2xx.h"
+
 
 #include <stdint.h>
 #include <stdio.h>
@@ -215,11 +218,18 @@ enable_sniffer_mode(short on)
     usbstick_mode.raw = 1;
     usbstick_mode.sendToRf = 0;
 #endif
+    printf("sniffer ON not handled\n");
   } else {
+#if 0
     ST_RadioEnableReceiveCrc(TRUE);     /* CRC will not be checked by hardware. */
     ST_RadioEnableAutoAck(TRUE);
     ST_RadioEnableAddressFiltering(TRUE);
     /* MAC_DRIVER.init(&stm32w_radio_driver); */
+#endif
+
+    // set no autoack
+    // set crc check
+    // set no filtering by radio
     usbstick_mode.raw = 0;
     usbstick_mode.sendToRf = 1;
   }
@@ -557,8 +567,6 @@ mac_createSicslowpanLongAddr(uint8_t *ethernet, uip_lladdr_t *lowpan)
   /* Special case - if the address is our address, we just copy over what we know to be */
   /* our 802.15.4 address */
 
-/*   if (memcmp_reverse((uint8_t *)&rndis_ethernet_addr, ethernet, 6) == 0) { */
-/*  if (memcmp((uint8_t *)&uip_lladdr.addr[2], ethernet, 6) == 0) {           */
   if(memcmp(&slip_eth_addr, ethernet, 6) == 0) {
     memcpy((uint8_t *)lowpan, uip_lladdr.addr, 8);
 /*  byte_reverse((uint8_t *)lowpan, 8); */
@@ -861,9 +869,9 @@ mac_802154raw(const struct radio_driver *radio)
   eth_dest = &ETHBUF(uip_buf)->dest;
 
 #ifndef ETH_ENCAP
-  len = radio->read(uip_buf, STM32W_MAX_PACKET_LEN);
+  len = radio->read(uip_buf, RF2XX_MAX_PAYLOAD);
 #else
-  len = radio->read(UIP_IP_BUF, STM32W_MAX_PACKET_LEN);
+  len = radio->read(UIP_IP_BUF, RF2XX_MAX_PAYLOAD);
   if(len > 0) {
     if(frame802154_parse(&uip_buf[UIP_LLH_LEN], len, &frame)) {
 
