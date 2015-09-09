@@ -716,6 +716,9 @@ main(int argc, char **argv)
   case 115200:
     b_rate = B115200;
     break;
+  case 500000:
+    b_rate = B500000;
+    break;
   default:
     err(1, "unknown baudrate %d", baudrate);
     break;
