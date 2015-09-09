@@ -281,16 +281,16 @@ after_fread:
             }
             ipaddr = autoconf_addr;
           }
-          ssystem("ifconfig %s down", tundev);
+          ssystem("ip link set dev %s down", tundev);
 
           strcpy(&macs[9], &macs[15]);  /* Elide two middle bytes. */
-          ssystem("ifconfig %s hw ether %s", tundev, macs);
-          ssystem("ifconfig %s inet6 up", tundev);
+          ssystem("ip link set dev %s addr %s", tundev, macs);
+          ssystem("ip link set dev %s up", tundev);
           if(ipaddr) {
-            ssystem("ifconfig %s inet6 add %s", tundev, ipaddr);
+            ssystem("ip addr add %s dev %s", ipaddr, tundev);
             ssystem("sysctl -w net.ipv6.conf.all.forwarding=1");
           }
-          ssystem("ifconfig %s\n", tundev);
+          ssystem("ip addr show %s\n", tundev);
         }
 #define DEBUG_LINE_MARKER '\r'
       } else if(uip.inbuf[0] == '?') {
@@ -538,7 +538,7 @@ tun_alloc(char *dev)
 void
 cleanup(void)
 {
-  ssystem("ifconfig %s down", tundev);
+  ssystem("ip link set dev %s down", tundev);
   if(ipaddr) {
     ssystem("sysctl -w net.ipv6.conf.all.forwarding=0");
   }
