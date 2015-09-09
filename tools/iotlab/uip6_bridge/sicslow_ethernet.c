@@ -64,8 +64,8 @@
 
    \verbatim
    +----+----+----+----+----+----+----+----+
- +    +    +    +    +    + TR + GL + MU +
- ++----+----+----+----+----+----+----+----+
+   +    +    +    +    +    + TR + GL + MU +
+   +----+----+----+----+----+----+----+----+
    \endverbatim
 
 
@@ -240,6 +240,8 @@ mac_ethernetSetup(void)
 /*   pmac->set_receive_function(mac_ethhijack);			   */
 /*   sicslowmac_snifferhook = mac_ethhijack_nondata; */
 }
+
+
 /**
  * \brief   Take a packet received over the ethernet link, and send it
  * out over 802.15.4
@@ -261,7 +263,6 @@ mac_ethernetToLowpan(uint8_t *ethHeader)
   /* If not IPv6 we don't do anything */
   if(((struct uip_eth_hdr *)ethHeader)->type != UIP_HTONS(UIP_ETHTYPE_IPV6)) {
     PRINTF("eth2low: Packet is not IPv6, dropping\n");
-/*     rndis_stat.txbad++; */
     uip_len = 0;
     return;
   }
@@ -285,7 +286,6 @@ mac_ethernetToLowpan(uint8_t *ethHeader)
             (((struct uip_eth_hdr *)ethHeader)->dest.addr[5] == 0xFF)) {
     /* IPv6 does not use broadcast addresses, hence this should not happen */
     PRINTF("eth2low: Ethernet broadcast address received, should not happen?\n");
-/*     rndis_stat.txbad++; */
     uip_len = 0;
     return;
   } else {
@@ -293,7 +293,6 @@ mac_ethernetToLowpan(uint8_t *ethHeader)
     /* Check this returns OK */
     if(mac_createSicslowpanLongAddr(&(((struct uip_eth_hdr *)ethHeader)->dest.addr[0]), &destAddr) == 0) {
       PRINTF(" translation failed\n");
-/*       rndis_stat.txbad++; */
       uip_len = 0;
       return;
     }
@@ -313,7 +312,6 @@ mac_ethernetToLowpan(uint8_t *ethHeader)
 
   if(usbstick_mode.sendToRf) {
     tcpip_output(destAddrPtr);
-/*    rndis_stat.txok++; */
   }
 
   uip_len = 0;
@@ -359,8 +357,6 @@ mac_LowpanToEthernet(void)
 
   uip_len += UIP_LLH_LEN;
 
-/*   rndis_send(uip_buf, uip_len, 1); */
-/*   rndis_stat.rxok++; */
 /*   uip_len = 0; */
 }
 /**
@@ -944,9 +940,6 @@ mac_802154raw(const struct radio_driver *radio)
 
   slip_write(uip_buf, len);
   leds_invert(LEDS_RED);
-
-  /* rndis_send(raw_buf, sendlen, 1); */
-  /* rndis_stat.rxok++; */
 
   return;
 }
