@@ -39,25 +39,25 @@
 #ifndef BRIDGE_CONF_H_
 #define BRIDGE_CONF_H_
 
-#undef WITH_RIME
-#define WITH_RIME 0
+#undef  WITH_RIME
+#define WITH_RIME               0
 
-#undef UIP_CONF_ROUTER
-#define UIP_CONF_ROUTER           0
+#undef  UIP_CONF_ROUTER
+#define UIP_CONF_ROUTER         0
 
-#undef UIP_CONF_LLH_LEN
-#define UIP_CONF_LLH_LEN         14
+#undef  UIP_CONF_LLH_LEN
+#define UIP_CONF_LLH_LEN        14
 
 #undef  UIP_CONF_BUFFER_SIZE
-#define UIP_CONF_BUFFER_SIZE  512
+#define UIP_CONF_BUFFER_SIZE    512
 
-#undef WITH_SERIAL_LINE_INPUT
-#define WITH_SERIAL_LINE_INPUT    0
+#undef  WITH_SERIAL_LINE_INPUT
+#define WITH_SERIAL_LINE_INPUT  0
 
-#undef FIXED_NET_ADDRESS
-#define FIXED_NET_ADDRESS      0
+#undef  FIXED_NET_ADDRESS
+#define FIXED_NET_ADDRESS       0
 
-#undef RADIO_RXBUFS
+#undef  RADIO_RXBUFS
 #define RADIO_RXBUFS            15
 
 #endif /* BRIDGE_CONF_H_ */
