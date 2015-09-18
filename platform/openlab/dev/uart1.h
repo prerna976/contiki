@@ -26,8 +26,19 @@
  *         Olivier Fambon <olivier.fambon.at.inria.fr>
  *
  */
+#ifndef OPENLAB_UART1_H
+#define OPENLAB_UART1_H
 
 #define BAUD2UBR(baud) baud
+
 typedef int (*uart_input_handler_t)(unsigned char);
+
+extern uart_input_handler_t uart1_input_handler;
 void uart1_set_input(uart_input_handler_t input);
-inline uart_input_handler_t uart1_get_input_handler();
+
+static inline uart_input_handler_t uart1_get_input_handler()
+{
+    return uart1_input_handler;
+}
+
+#endif//OPENLAB_UART1_H
