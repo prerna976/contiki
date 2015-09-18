@@ -60,4 +60,6 @@
 #undef  RADIO_RXBUFS
 #define RADIO_RXBUFS            15
 
+#define RF2XX_CHANNEL           21
+
 #endif /* BRIDGE_CONF_H_ */
