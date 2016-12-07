@@ -39,6 +39,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "er-coap-observe.h"
+#include "er-coap-engine.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -74,6 +75,7 @@ add_observer(uip_ipaddr_t *addr, uint16_t port, const uint8_t *token,
     }
     memcpy(o->url, uri, max);
     o->url[max] = 0;
+    o->ctx = coap_default_context;
     uip_ipaddr_copy(&o->addr, addr);
     o->port = port;
     o->token_len = token_len;
@@ -228,6 +230,7 @@ coap_notify_observers_sub(resource_t *resource, const char *subpath)
       /*TODO implement special transaction for CON, sharing the same buffer to allow for more observers */
 
       if((transaction = coap_new_transaction(coap_get_mid(), &obs->addr, obs->port))) {
+        coap_set_transaction_context(transaction, obs->ctx);
         if(obs->obs_counter % COAP_OBSERVE_REFRESH_INTERVAL == 0) {
           PRINTF("           Force Confirmable for\n");
           notification->type = COAP_TYPE_CON;
