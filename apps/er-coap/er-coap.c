@@ -43,8 +43,8 @@
 #include "contiki-net.h"
 
 #include "er-coap.h"
-#include "er-coap-engine.h"
 #include "er-coap-transactions.h"
+#include "er-coap-communication.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -279,7 +279,7 @@ void
 coap_init_connection(uint16_t port)
 {
   /* new connection with remote host */
-  coap_default_context = coap_init_communication_layer(port);
+  coap_init_communication_layer(port);
 
   /* initialize transaction ID */
   current_mid = random_rand();

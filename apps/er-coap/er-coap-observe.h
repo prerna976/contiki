@@ -57,7 +57,6 @@ typedef struct coap_observer {
   struct coap_observer *next;   /* for LIST */
 
   char url[COAP_OBSERVER_URL_LEN];
-  context_t *ctx;
   uip_ipaddr_t addr;
   uint16_t port;
   uint8_t token_len;

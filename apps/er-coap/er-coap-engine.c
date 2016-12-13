@@ -41,6 +41,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "er-coap-engine.h"
+#include "er-coap-communication.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -60,13 +61,12 @@ PROCESS(coap_engine, "CoAP Engine");
 /*- Variables ---------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 static service_callback_t service_cbk = NULL;
-context_t *coap_default_context = NULL;
 
 /*---------------------------------------------------------------------------*/
 /*- Internal API ------------------------------------------------------------*/
 /*---------------------------------------------------------------------------*/
 int
-coap_receive(context_t *ctx)
+coap_receive()
 {
   erbium_status_code = NO_ERROR;
 
@@ -108,7 +108,6 @@ coap_receive(context_t *ctx)
           uint16_t block_size = COAP_MAX_BLOCK_SIZE;
           uint32_t block_offset = 0;
           int32_t new_offset = 0;
-          coap_set_transaction_context(transaction, ctx);
 
           /* prepare response */
           if(message->type == COAP_TYPE_CON) {
@@ -262,7 +261,7 @@ coap_receive(context_t *ctx)
         if((message->type == COAP_TYPE_CON || message->type == COAP_TYPE_NON)
            && IS_OPTION(message, COAP_OPTION_OBSERVE)) {
           PRINTF("Observe [%u]\n", message->observe);
-          coap_handle_notification(ctx, &UIP_IP_BUF->srcipaddr, UIP_UDP_BUF->srcport,
+          coap_handle_notification(&UIP_IP_BUF->srcipaddr, UIP_UDP_BUF->srcport,
                                    message);
         }
 #endif /* COAP_OBSERVE_CLIENT */
@@ -295,7 +294,7 @@ coap_receive(context_t *ctx)
                         message->mid);
       coap_set_payload(message, coap_error_message,
                        strlen(coap_error_message));
-      coap_send_message(ctx, &UIP_IP_BUF->srcipaddr, UIP_UDP_BUF->srcport,
+      coap_send_message(&UIP_IP_BUF->srcipaddr, UIP_UDP_BUF->srcport,
                         uip_appdata, coap_serialize_message(message,
                                                             uip_appdata));
     }
@@ -348,7 +347,7 @@ PROCESS_THREAD(coap_engine, ev, data)
     PROCESS_YIELD();
 
     if(ev == tcpip_event) {
-      coap_handle_receive(coap_default_context);
+      coap_handle_receive();
     } else if(ev == PROCESS_EVENT_TIMER) {
       /* retransmissions are handled here */
       coap_check_transactions();
@@ -371,7 +370,7 @@ coap_blocking_request_callback(void *callback_data, void *response)
 /*---------------------------------------------------------------------------*/
 PT_THREAD(coap_blocking_request
             (struct request_state_t *state, process_event_t ev,
-            context_t *ctx, uip_ipaddr_t *remote_ipaddr, uint16_t remote_port,
+            uip_ipaddr_t *remote_ipaddr, uint16_t remote_port,
             coap_packet_t *request,
             blocking_response_handler request_callback))
 {
@@ -393,7 +392,6 @@ PT_THREAD(coap_blocking_request
     request->mid = coap_get_mid();
     if((state->transaction = coap_new_transaction(request->mid, remote_ipaddr,
                                                   remote_port))) {
-      coap_set_transaction_context(state->transaction, ctx);
       state->transaction->callback = coap_blocking_request_callback;
       state->transaction->callback_data = state;
 
