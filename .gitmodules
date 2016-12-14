@@ -13,4 +13,6 @@
 [submodule "platform/stm32nucleo-spirit1/stm32cube-lib"]
 	path = platform/stm32nucleo-spirit1/stm32cube-lib
 	url = https://github.com/STclab/stm32nucleo-spirit1-lib
-
+[submodule "apps/tinydtls"]
+	path = apps/tinydtls
+	url = https://github.com/iot-lab/armour-tinydtls.git
