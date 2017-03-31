@@ -387,7 +387,8 @@ PROCESS_THREAD(border_router_process, ev, data)
       rpl_repair_root(RPL_DEFAULT_INSTANCE);
     }
   }
-
+PRINTF(" Sending 100 packets");
+  PRINTF("RTT is");
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
